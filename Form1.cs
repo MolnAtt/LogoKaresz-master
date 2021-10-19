@@ -46,6 +46,34 @@ namespace LogoKaresz
 			}
 		}
 
+		void Színezzél_Szebben(Point p, Color mit, Color mire)
+		{
+			Sor<Point> tennivalók = new Sor<Point>();
+			if (rajzlap.GetPixel(p.X, p.Y) == mit) // amin állunk, azt színezni kell-e?
+				tennivalók.Enqueue(p);
+
+			while (!tennivalók.Empty()) // addig dolgozunk, amíg van tennivaló
+			{
+				Point tennivaló = tennivalók.Dequeue();
+				rajzlap.SetPixel(tennivaló.X, tennivaló.Y, mire);
+
+				// itt végeztünk a legfölső tennivalóval.
+				// Regisztráljuk az új tennivalókat!
+
+				// először körbenézünk
+				List<Point> szomszédok = new List<Point> {
+					new Point(tennivaló.X, tennivaló.Y - 1),
+					new Point(tennivaló.X - 1, tennivaló.Y),
+					new Point(tennivaló.X, tennivaló.Y + 1),
+					new Point(tennivaló.X + 1, tennivaló.Y)
+				};
+
+				foreach (Point szomszéd in szomszédok)
+					if (rajzlap.GetPixel(szomszéd.X, szomszéd.Y) == mit)
+						tennivalók.Enqueue(szomszéd); // nem ugrunk rá egyből, hanem csak besoroljuk a tennivalók közé.
+			}
+		}
+
 
 		void FELADAT()
 		{
@@ -61,7 +89,7 @@ namespace LogoKaresz
 				Jobbra(54);
 				Előre(20);
 				Point kareszhelye = defaultkaresz.Hely.ToPoint();
-				Színezzél_Jobban(kareszhelye, rajzlap.GetPixel(kareszhelye.X, kareszhelye.Y), Color.Red);
+				Színezzél_Szebben(kareszhelye, rajzlap.GetPixel(kareszhelye.X, kareszhelye.Y), Color.Red);
 				Hátra(20);
 				Balra(54);
 			}
